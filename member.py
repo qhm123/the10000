@@ -47,6 +47,8 @@ class MemberHandler(webapp.RequestHandler):
         template_values['site'] = site
         template_values['system_version'] = SYSTEM_VERSION
         member = CheckAuth(self)
+        if not member:
+            self.redirect('/signin')
         template_values['member'] = member
         template_values['show_extra_options'] = False
         if member:

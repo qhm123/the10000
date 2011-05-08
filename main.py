@@ -28,6 +28,7 @@ from v2ex.babel import Node
 from v2ex.babel import Topic
 from v2ex.babel import Reply
 from v2ex.babel import PasswordResetToken
+from v2ex.babel import Invitation
 
 from v2ex.babel import SYSTEM_VERSION
 
@@ -66,6 +67,8 @@ class HomeHandler(webapp.RequestHandler):
         template_values['page_title'] = site.title
         template_values['system_version'] = SYSTEM_VERSION
         member = CheckAuth(self)
+        if not member:
+            self.redirect("/signin")
         l10n = GetMessages(self, member, site)
         template_values['l10n'] = l10n
 	# 首页日记, 由1号成员维护，主要记录站点更新记录
@@ -448,6 +451,17 @@ class SignupHandler(webapp.RequestHandler):
         template_values['member_email'] = member_email
         template_values['member_email_error'] = member_email_error
         template_values['member_email_error_message'] = member_email_error_messages[member_email_error]
+        # Verification: invitation
+        invitation = self.request.get('invitation').strip()
+        q = db.GqlQuery('SELECT * FROM Invitation WHERE code = :1', invitation)
+        if q.count() > 0:
+            invi = q[0]
+            logging.info('invitation code %s used.' % invitation)
+            template_values['invitation_error'] = 0
+        else:
+            errors = errors + 1
+            template_values['invitation_error'] = 1
+            template_values['invitation_error_message'] = "无效的邀请码"
         # Verification: reCAPTCHA
         challenge = self.request.get('recaptcha_challenge_field')
         response  = self.request.get('recaptcha_response_field')
@@ -500,6 +514,8 @@ class SignupHandler(webapp.RequestHandler):
             member.put()
             counter.put()
             counter2.put()
+            invi.used = True
+            invi.put()
             self.response.headers['Set-Cookie'] = 'auth=' + member.auth + '; expires=' + (datetime.datetime.now() + datetime.timedelta(days=365)).strftime("%a, %d-%b-%Y %H:%M:%S GMT") + '; path=/'
             self.redirect('/')
         else:
@@ -927,19 +943,21 @@ class RouterHandler(webapp.RequestHandler):
                     self.response.headers['Content-Type'] = page.content_type
                     self.response.out.write(page.content)
 
+class InvitationHandler(webapp.RequestHandler):
+    def get(self):
+        Invitation.generate()
+        self.redirect("/")
+
 def main():
     application = webapp.WSGIApplication([
     ('/', HomeHandler),
-    ('/recent', RecentHandler),
     ('/ua', UAHandler),
     ('/signin', SigninHandler),
     ('/signup', SignupHandler),
     ('/signout', SignoutHandler),
     ('/forgot', ForgotHandler),
     ('/reset/([0-9]+)', PasswordResetHandler),
-    ('/go/(.*)', NodeHandler),
-    ('/n/([a-zA-Z0-9]+).json', NodeApiHandler),
-    ('/q/(.*)', SearchHandler),
+    ('/invitation/generate', InvitationHandler),
     ('/_dispatcher', DispatcherHandler),
     ('/(.*)', RouterHandler)
     ],

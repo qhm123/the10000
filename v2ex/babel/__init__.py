@@ -2,6 +2,7 @@ SYSTEM_VERSION = '2.4.0-RC1'
 
 import datetime
 import hashlib
+import logging
 
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -49,6 +50,12 @@ class Member(db.Model):
     favorited_topics = db.IntegerProperty(required=True, default=0)
     favorited_members = db.IntegerProperty(required=True, default=0)
     followers_count = db.IntegerProperty(required=True, default=0)
+
+    @classmethod
+    def getMember1(cls):
+        q = db.GqlQuery("SELECT * FROM Member WHERE num = 1")
+        if q.count() == 1:
+            return q[0]
     
     def hasFavorited(self, something):
         if type(something).__name__ == 'Node':
@@ -274,3 +281,20 @@ class Hours(db.Model):
     adds = db.IntegerProperty(default=0)
     # tags
     # vote_by_others
+
+class Invitation(db.Model):
+    code = db.StringProperty()
+    used = db.BooleanProperty(default=False)
+    owner = db.ReferenceProperty(Member)
+
+    @classmethod
+    def generate(cls, count=10, owner=Member.getMember1()):
+        logging.info("owner: %s" % owner)
+        logging.info("count: %d" % count)
+        for i in range(count):
+            code = hashlib.sha1(str(datetime.datetime.now()) + str(owner.num)).hexdigest()
+            logging.info("code: %s" % code)
+            invi = Invitation()
+            invi.code = code
+            invi.owner = owner
+            invi.put()

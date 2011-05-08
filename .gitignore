@@ -1,9 +1,11 @@
 .DS_Store
 *.pyc
 *.pyo
+*.swp
 .bzr
 .bzrignore
 psd
 config.py
 app.yaml
 tags
+nohup.out
