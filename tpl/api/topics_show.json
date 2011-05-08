@@ -1,0 +1,24 @@
+{% if topics %}
+[
+    {% for topic in topics %}
+    {% ifequal forloop.counter 1 %}{% else %},{% endifequal %}
+    {
+        "id" : {{ topic.num }},
+        "title" : "{{ topic.title|escapejs }}",
+        "url" : "http://{{ site.domain }}/t/{{ topic.num }}",
+        "content" : "{{ topic.content|escapejs }}",
+        "content_rendered" : "{{ topic.content_rendered|escapejs}}",
+        "replies" : {{ topic.replies }}
+    }
+    {% endfor %}
+]
+{% else %}
+{
+    "id" : {{ topic.num }},
+    "title" : "{{ topic.title|escapejs }}",
+    "url" : "http://{{ site.domain }}/t/{{ topic.num }}",
+    "content" : "{{ topic.content|escapejs }}",
+    "content_rendered" : "{{ topic.content_rendered|escapejs}}",
+    "replies" : {{ topic.replies }}
+}
+{% endif %}

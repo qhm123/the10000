@@ -1,0 +1,158 @@
+{% include 'common/head.html' %}
+<body>
+    {% include 'common/top.html' %}
+    <div id="Wrapper">
+    <div id="Main">
+        <div id="Sidebar">
+            
+        </div>
+        <div id="Rightbar">
+            {% include 'rightbar/user.html' %}
+        </div>
+        <div id="Content">
+            {% if message %}
+            <div class="box">
+                <div class="inner">{{ message }}</div>
+            </div>
+            <div class="sep20"></div>
+            {% endif %}
+            <div class="box">{% if hours.mission %}<div class="cell">{% else %}<div class="inner">{% endif %}
+            {% ifequal one.num member.num %}
+            <div class="fr">
+                <div class="sep5"></div>
+                <a id="changehours" href="#" class="super normal button">更改</a>
+                <a id="changeconfirm" href="#" class="super normal button" style="display:none;">确定</a>
+                <a id="changecancel" href="#" class="super normal button" style="display:none;">取消</a>
+                <div class="sep5"></div>
+            </div>
+            {% endifequal %}
+            <div class="sep5"></div>
+            <span class="fade"><a href="/">{{ site.title }}</a> <span class="chevron">&nbsp;›&nbsp;</span> <span id="changevalueshow">{{ hours.value }}</span><input id="changevalue" style="display:none;" value="{{ hours.value }}"></span>
+            <div class="sep5"></div>
+                <!--<table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                        <td width="73" valign="top" align="center">{{ one|avatar:"large" }}
+                            {% if show_block %}
+                            <div class="sep10"></div>
+                            {% if one_is_blocked %}
+                            <input type="button" value="撤销屏蔽" class="super normal button" onclick="location.href = '/unblock/{{ one.key }}';" />
+                            {% else %}
+                            <input type="button" value="屏蔽此人" class="super normal button" onclick="location.href = '/block/{{ one.key }}';" />
+                            {% endif %}
+                            {% endif %}
+                            {% if show_extra_options %}
+                            <div class="sep10"></div>
+                            <div align="center"><small><strong><a href="/backstage/deactivate/user/{{ one.key }}" class="dark">DEACTIVATE</a></strong></small></div>
+                            {% endif %}
+                        </td>
+                        <td width="10" valign="top"></td>
+                        <td width="auto" align="left" valign="top">{% if show_follow %}<div class="fr"><div class="sep3"></div>{% if favorited %}<a href="/unfollow/{{ one.num }}" class="super inverse button" onClick="recordOutboundLink(this, 'Social Graph', 'unfollow');">取消特别关注</a>{% else %}<a href="/follow/{{ one.num }}" class="super special button" onClick="recordOutboundLink(this, 'Social Graph', 'follow');">加入特别关注</a>{% endif %}</div>{% endif %}<h2 style="padding: 0px; margin: 0px; font-size: 22px; line-height: 22px;">{{ one.username }}</h2>
+                            {% if one.tagline %}
+                            <div class="sep5"></div>
+                            <span class="fade bigger">{{ one.tagline|escape }}</span>
+                            {% endif %}
+                            <div class="sep5"></div>
+                            <span class="snow">{{ site.title }} 第 {{ one.num }} 号会员，加入于 {{ one.created|timezone:8|date:"Y-n-j G:i:s A" }}</span>
+                            <div class="sep10"></div>
+                            <table cellpadding="2" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td width="50%">{% if one.twitter %}
+                                    <span style="line-height: 16px;"><img src="http://v2ex.com/static/img/twitter.png" align="absmiddle" /> &nbsp;<a href="http://twitter.com/{{ one.twitter }}">@{{ one.twitter }}</a></span>
+                                    {% endif %}
+                                    </td>
+                                    <td width="50%"><span style="line-height: 16px;"><img src="http://v2ex.com/static/img/heart.png" align="absmiddle" /> &nbsp;{{ one.followers_count }} followers</span></td>
+                                </tr>
+                                <tr>
+                                    <td width="50%">{% if one.website %}
+                                    <span style="line-height: 16px;"><img src="http://v2ex.com/static/img/mobileme.png" align="absmiddle" /> &nbsp;<a href="{{ one.website|escape }}" target="_blank" rel="nofollow external">{{ one.website|escape }}</a></span>
+                                    {% endif %}
+                                    </td>
+                                    <td width="50%"></td>
+                                </tr>
+                                <tr>
+                                    <td width="50%">{% if one.location %}
+                                    <span style="line-height: 16px;"><img src="http://v2ex.com/static/img/location.png" align="absmiddle" /> &nbsp;<a href="http://www.google.com/maps?q={{ one.location|escape }}" target="_blank" rel="nofollow external">{{ one.location|escape }}</a></span>
+                                    {% endif %}</td>
+                                    <td width="50%"></td>
+                                </tr>
+                            </table>
+                            
+                        </td>
+                    </tr>
+                </table>
+		-->
+                </div>
+                {% if hours.mission %}
+                <div class="inner">
+                    {{ hours.mission|escape|imgly|mentions|urlize|linebreaksbr }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="sep20"></div>
+            <div class="box">
+                <div class="cell"><div class="fr"><div class="sep5"></div><a href="/notes/new" class="super normal button">新建</a><div class="sep5"></div></div><div class="sep5"></div><span class="fade"><a href="/">{{ site.title }}</a> <span class="chevron">&nbsp;›&nbsp;</span> {{ l10n.notes }}</span><div class="sep5"></div></div>
+                {% if notes %}
+                {% for note in notes %}
+                <div class="cell">
+                <span class="bigger"><a href="/notes/{{ note.num }}" class="black">{{ note.title|escape }}</a></span>
+                <div class="sep10"></div>
+                <span class="fade">{{ note.length }} 个字符，创建于 {{ note.created|timesince }} 前，{{ note.edits }} 次编辑</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="inner">
+                    <div align="center">
+                        <div class="sep20"></div>
+                        <div class="sep20"></div>
+                        <img src="/static/img/cloud.png" />
+                        <div class="sep20"></div>
+                        <div class="sep20"></div>
+                        <span class="fade">V2EX Notes 是一个简单可靠的云端记事本，你的数据绝对安全，随时可以访问。</span>
+                        <div class="sep20"></div>
+                    </div>
+                </div>    
+                {% endif %}
+            </div>
+
+      </div>
+
+    <div class="c"></div>
+    </div>
+    </div>
+    {% include 'common/bottom.html' %}
+    <script>
+        $('#changehours').click(function(){
+            $(this).hide();
+            $('#changeconfirm').show();
+            $('#changecancel').show();
+            $('#changevalue').show();
+            $('#changevalueshow').hide();
+        });
+        $('#changeconfirm').click(function(){
+            self = $(this);
+            value = $('#changevalue').val();
+            $.post('/changehours', {"value": value}, function(data){
+                console.info(data['ok']);
+                if(data['ok']){
+                    $('#changevalueshow').text(data['value']);
+                    $('#changevalue').val(data['value']);
+                }else{
+                    alert("您更改的小时数大于距离你上次更改的时间，请不要作弊。如果确实没有，那么请联系管理员，谢谢！");
+                }
+                $('#changecancel').hide();
+                self.hide();
+                $('#changehours').show();
+                $('#changevalue').hide();
+                $('#changevalueshow').show();
+            });
+        });
+        $('#changecancel').click(function(){
+            $(this).hide();
+            $('#changeconfirm').hide();
+            $('#changehours').show();
+            $('#changevalue').hide();
+            $('#changevalueshow').show();
+        });
+    </script>
+</body>
+</html>

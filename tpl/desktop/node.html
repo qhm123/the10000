@@ -1,0 +1,98 @@
+{% include 'common/head.html' %}
+<body>
+    {% include 'common/top.html' %}
+    <div id="Wrapper">
+    <div id="Main">
+        <div id="Sidebar">    
+        </div>
+        <div id="Rightbar">
+            {% include 'rightbar/user.html' %}
+            <div class="sep20"></div>
+            {% if node.sidebar %}
+            <div class="box"><div class="inner">{{ node.sidebar }}</div></div>
+            <div class="sep20"></div>
+            {% endif %}
+            {% include 'rightbar/ads.html' %}
+            {% include 'rightbar/recent_nodes.html' %}
+        </div>
+        <div id="Content">
+            <div class="box">
+                <div class="cell"><div class="fr" align="right"><span class="snow">{{ l10n.total_topics }}</span> <span class="fade"><strong>{{ node.topics }}</strong>{% if member %}<div class="sep3"></div>{% if favorited %}<a href="/unfavorite/node/{{ node.name }}">取消收藏</a>{% else %}<a href="/favorite/node/{{ node.name }}">加入收藏</a>{% endif %}{% endif %}</span></div>
+                <span class="bigger"><a href="/">{{ site.title }}</a> <span class="chevron">&nbsp;›&nbsp;</span> {{ node.title|escape }}</span>
+                {% if node.header %}
+                <div class="sep10"></div>
+                <span class="header">{{ node.header|linebreaksbr }}</span>
+                {% endif %}
+                {% if member %}
+                <div class="sep10"></div>
+                <div class="sep5"></div>
+                <a href="/new/{{ node.name }}" class="super normal button">{{ l10n.create_new_topic }}</a>
+                <div class="sep5"></div>
+                {% endif %}
+                </div>
+                <div class="cell">
+                    <table cellpadding="5" cellspacing="0" border="0" width="100%" class="topics">
+                        <tr>
+                            <th align="right" width="50">{{ l10n.header_replies }}</td>
+                            <th align="left" width="auto">{{ l10n.header_subject }}</td>
+                            <th align="left" width="80">{{ l10n.header_author }}</td>
+                            <th align="left" width="110">{{ l10n.header_last_replied }}</td>
+                        </tr>
+                        {% include 'common/topics.html' %}
+                    </table>
+                </div>
+                <div class="inner">
+                    {% if pagination %}
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                                <td width="100" align="left">
+                                    {% if has_previous %}
+                                    <div class="sep5"></div>
+                                    <a href="/go/{{ node.name }}?p={{ previous }}" class="super normal button">{{ l10n.previous }}</a>
+                                    <div class="sep5"></div>
+                                    {% endif %}
+                                </td>
+                                <td width="auto" align="center" valign="middle">
+                                    <strong style="font-size: 13px"><span class="fade">{{ page }}/{{ pages }}</span><span class="snow"> - {{ node.topics }} Topics</span></strong>
+                                </td>
+                                <td width="100" align="right">
+                                    {% if has_more %}
+                                    <div class="sep5"></div>
+                                    <a href="/go/{{ node.name }}?p={{ more }}" class="super normal button">{{ l10n.next }}</a>
+                                    <div class="sep5"></div>
+                                    {% endif %}
+                                </td>
+                        </table>
+                    {% else %}
+                    {% endif %}
+                    {% if node.footer %}
+                        {% if pagination %}
+                        <div class="sep10"></div>
+                        {% endif %}
+                        <span class="footer">{{ node.footer|linebreaksbr }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% if member %}
+            <div class="sep20"></div>
+            <div class="box">
+                <div class="cell">快速发贴</div>
+                <div class="cell">
+                    <form action="/new/{{ node.name }}" method="post">
+                    <input type="text" name="title" value="" class="sll" />
+                    <div class="sep10"></div>
+                    <textarea name="content" class="mll"></textarea>
+                    <div class="sep10"></div>
+                    <input type="submit" value="{{ l10n.create }}" class="super normal button" />
+                    </form>
+                </div>
+                <div class="inner"><span class="fade">请不要创建重复主题。</span></div>
+            </div>
+            {% endif %}
+        </div>
+    <div class="c"></div>
+    </div>
+    </div>
+    {% include 'common/bottom.html' %}
+</body>
+</html>
